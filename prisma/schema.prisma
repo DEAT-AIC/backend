@@ -19,10 +19,11 @@ enum JenisKelamin {
 
 model User {
     uuid String @default(uuid()) @id
-    email String
+    email String @unique
     nama String
     phone String?
-    status Boolean? @default(false)
+    address String?
+    emailValid Boolean? @default(false)
 
     anak Anak[]
 }
