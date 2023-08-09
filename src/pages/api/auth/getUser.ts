@@ -9,9 +9,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await requestHandler(req, res, {
     GET: async () => {
       try {
-        const token = req.headers.authorization as string;
+        const token = req.headers.accesstoken as string;
         let accessToken = token.replace(/%22/g, '');
-        const rt = req.headers.refeshToken as string;
+        const rt = req.headers.refreshtoken as string;
         const refreshToken = rt.replace(/%22/g, '');
         let decodedToken: any;
         await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {

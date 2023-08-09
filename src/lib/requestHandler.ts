@@ -24,7 +24,7 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "GET":
         if (allowedRoles && allowedRoles?.GET) {
           try {
-            const token = req.headers.authorization as string;
+            const token = req.headers.accesstoken as string;
             const accessToken = token.replace(/%22/g, '');
             const roles = allowedRoles.GET;
             const decodedToken = await adminApp.auth().verifyIdToken(accessToken, true);
@@ -37,7 +37,7 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
             }
           } catch (error) {
             console.log(error)
-            res.status(400).json({ message: "Invalid Token" });
+            res.status(400).json({ user: "Unathorized" });
           }
         } else {
           handler.GET ? await handler.GET() : res.status(405).json({ message: "Method not allowed" });
@@ -46,7 +46,7 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "POST":
         if (allowedRoles && allowedRoles?.POST) {
           try {
-            const token = req.headers.authorization as string;
+            const token = req.headers.accesstoken as string;
             const accessToken = token.replace(/%22/g, '');
             const roles = allowedRoles.POST;
             const decodedToken = await adminApp.auth().verifyIdToken(accessToken);
@@ -59,7 +59,7 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
             }
           } catch (error) {
             console.log(error)
-            res.status(400).json({ message: "Invalid Token" });
+            res.status(400).json({ user: "Unathorized" });
           }
         } else {
           handler.POST ? await handler.POST() : res.status(405).json({ message: "Method not allowed" });
@@ -68,7 +68,7 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "PUT":
         if (allowedRoles && allowedRoles?.PUT) {
           try {
-            const token = req.headers.authorization as string;
+            const token = req.headers.accesstoken as string;
             const accessToken = token.replace(/%22/g, '');
             const roles = allowedRoles.PUT;
             const decodedToken = await adminApp.auth().verifyIdToken(accessToken);
@@ -81,7 +81,7 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
             }
           } catch (error) {
             console.log(error)
-            res.status(400).json({ message: "Invalid Token" });
+            res.status(400).json({ user: "Unathorized" });
           }
         } else {
           handler.PUT ? await handler.PUT() : res.status(405).json({ message: "Method not allowed" });
@@ -90,7 +90,7 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "DELETE":
         if (allowedRoles && allowedRoles?.DELETE) {
           try {
-            const token = req.headers.authorization as string;
+            const token = req.headers.accesstoken as string;
             const accessToken = token.replace(/%22/g, '');
             const roles = allowedRoles.DELETE;
             const decodedToken = await adminApp.auth().verifyIdToken(accessToken);
@@ -103,7 +103,7 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
             }
           } catch (error) {
             console.log(error)
-            res.status(400).json({ message: "Invalid Token" });
+            res.status(400).json({ user: "Unathorized" });
           }
         } else {
           handler.DELETE ? await handler.DELETE() : res.status(405).json({ message: "Method not allowed" });

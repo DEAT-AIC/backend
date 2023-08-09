@@ -32,6 +32,7 @@ model Anak {
     uuid String @default(uuid()) @id
     user User @relation(fields: [idUser], references: [uuid])
     idUser String
+    nama String
     tanggalLahir DateTime @db.Date
     jenisKelamin JenisKelamin
 

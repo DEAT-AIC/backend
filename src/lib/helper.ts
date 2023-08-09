@@ -1,17 +1,17 @@
 const getTime = (datetime: any) => {
-    const dt = new Date(datetime);
-    const datetimeString = dt.toISOString();
-    const timeString: string = datetimeString.substr(11, 8);
-    return timeString;
+  const dt = new Date(datetime);
+  const datetimeString = dt.toISOString();
+  const timeString: string = datetimeString.substr(11, 8);
+  return timeString;
 }
 
 function getDate(datetime: any): string {
-    const date: Date = new Date(datetime);
-    const day: string = date.getDate().toString().padStart(2, '0');
-    const month: string = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year: string = date.getFullYear().toString();
-    return `${day}-${month}-${year}`;
-  }
+  const date: Date = new Date(datetime);
+  const day: string = date.getDate().toString().padStart(2, '0');
+  const month: string = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year: string = date.getFullYear().toString();
+  return `${day}-${month}-${year}`;
+}
 
 const getDay = (today: Date) => {
   const daysOfWeek: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -24,4 +24,27 @@ const getDay = (today: Date) => {
   return res;
 }
 
-export { getTime, getDate, getDay }
+function calculateAge(dateOfBirth: any): { years: number; months: number } {
+  const dob = new Date(dateOfBirth);
+  const today = new Date();
+
+  let years = today.getFullYear() - dob.getFullYear();
+  let months = today.getMonth() - dob.getMonth();
+
+  if (today.getDate() < dob.getDate()) {
+    months--;
+  }
+
+  if (months < 0) {
+    years--;
+    months = 12 + months;
+  }
+
+  return { years, months };
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export { getTime, getDate, getDay, calculateAge, sleep }
