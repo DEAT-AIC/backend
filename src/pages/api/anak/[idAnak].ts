@@ -7,6 +7,12 @@ import { calculateAge } from "@/lib/helper";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { idAnak } = req.query;
     await requestHandler(req, res, {
+        allowedRoles: {
+            GET: ["USER"],
+            PUT: ["USER"],
+            POST: ["USER"],
+            DELETE: ["USER"],
+        },
         GET: async () => {
             const anak: any = await prisma.anak.findUnique({
                 where: {
