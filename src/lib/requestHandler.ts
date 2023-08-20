@@ -1,6 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from "next";
 import { adminApp } from "./firebaseAdmin";
+import Cookies from "cookies";
+import axios from "axios";
 
 type Role = "USER" | "THERAPIST";
 
@@ -24,10 +26,44 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "GET":
         if (allowedRoles && allowedRoles?.GET) {
           try {
-            const token = req.headers.accesstoken as string;
-            const accessToken = token.replace(/%22/g, '');
+            const cookies = new Cookies(req, res);
+            const temp = cookies.get('accessToken') as string;
+            let accessToken = temp.replace(/%22/g, '');
+            const rt = cookies.get('refreshToken') as string;
+            let refreshToken = rt.replace(/%22/g, '');
             const roles = allowedRoles.GET;
-            const decodedToken = await adminApp.auth().verifyIdToken(accessToken, true);
+            let decodedToken: any;
+            await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
+              decodedToken = dt;
+            }).catch(async (error) => {
+              if (error.code === 'auth/id-token-expired') {
+                const apiKey = process.env.FIREBASE_API_KEY;
+                const secureTokenEndpoint = `https://securetoken.googleapis.com/v1/token?key=` + apiKey;
+
+                const data = {
+                  grant_type: 'refresh_token',
+                  refresh_token: refreshToken,
+                };
+
+                await axios.post(secureTokenEndpoint, data)
+                  .then(async (response) => {
+                    accessToken = response.data.id_token;
+                    await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
+                      decodedToken = dt;
+                      const url = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/setToken";
+                      const token = {
+                        accessToken: accessToken,
+                        refreshToken: refreshToken
+                      }
+                      await axios.post(url, token);
+                    })
+                  })
+                  .catch((error) => {
+                    console.error('Error refreshing ID token:', error);
+                    res.status(200).json({ user: "Unathorized" });
+                  });
+              }
+            });
             const role = decodedToken.role;
             if (!roles.includes(role) && roles.length > 0) {
               const message = `Role ${role} is not allowed to access this API route.`;
@@ -46,10 +82,44 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "POST":
         if (allowedRoles && allowedRoles?.POST) {
           try {
-            const token = req.headers.accesstoken as string;
-            const accessToken = token.replace(/%22/g, '');
+            const cookies = new Cookies(req, res);
+            const temp = cookies.get('accessToken') as string;
+            let accessToken = temp.replace(/%22/g, '');
+            const rt = cookies.get('refreshToken') as string;
+            let refreshToken = rt.replace(/%22/g, '');
             const roles = allowedRoles.POST;
-            const decodedToken = await adminApp.auth().verifyIdToken(accessToken);
+            let decodedToken: any;
+            await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
+              decodedToken = dt;
+            }).catch(async (error) => {
+              if (error.code === 'auth/id-token-expired') {
+                const apiKey = process.env.FIREBASE_API_KEY;
+                const secureTokenEndpoint = `https://securetoken.googleapis.com/v1/token?key=` + apiKey;
+
+                const data = {
+                  grant_type: 'refresh_token',
+                  refresh_token: refreshToken,
+                };
+
+                await axios.post(secureTokenEndpoint, data)
+                  .then(async (response) => {
+                    accessToken = response.data.id_token;
+                    await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
+                      decodedToken = dt;
+                      const url = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/setToken";
+                      const token = {
+                        accessToken: accessToken,
+                        refreshToken: refreshToken
+                      }
+                      await axios.post(url, token);
+                    })
+                  })
+                  .catch((error) => {
+                    console.error('Error refreshing ID token:', error);
+                    res.status(200).json({ user: "Unathorized" });
+                  });
+              }
+            });
             const role = decodedToken.role;
             if (!roles.includes(role) && roles.length > 0) {
               const message = `Role ${role} is not allowed to access this API route.`;
@@ -68,10 +138,44 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "PUT":
         if (allowedRoles && allowedRoles?.PUT) {
           try {
-            const token = req.headers.accesstoken as string;
-            const accessToken = token.replace(/%22/g, '');
+            const cookies = new Cookies(req, res);
+            const temp = cookies.get('accessToken') as string;
+            let accessToken = temp.replace(/%22/g, '');
+            const rt = cookies.get('refreshToken') as string;
+            let refreshToken = rt.replace(/%22/g, '');
             const roles = allowedRoles.PUT;
-            const decodedToken = await adminApp.auth().verifyIdToken(accessToken);
+            let decodedToken: any;
+            await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
+              decodedToken = dt;
+            }).catch(async (error) => {
+              if (error.code === 'auth/id-token-expired') {
+                const apiKey = process.env.FIREBASE_API_KEY;
+                const secureTokenEndpoint = `https://securetoken.googleapis.com/v1/token?key=` + apiKey;
+
+                const data = {
+                  grant_type: 'refresh_token',
+                  refresh_token: refreshToken,
+                };
+
+                await axios.post(secureTokenEndpoint, data)
+                  .then(async (response) => {
+                    accessToken = response.data.id_token;
+                    await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
+                      decodedToken = dt;
+                      const url = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/setToken";
+                      const token = {
+                        accessToken: accessToken,
+                        refreshToken: refreshToken
+                      }
+                      await axios.post(url, token);
+                    })
+                  })
+                  .catch((error) => {
+                    console.error('Error refreshing ID token:', error);
+                    res.status(200).json({ user: "Unathorized" });
+                  });
+              }
+            });
             const role = decodedToken.role;
             if (!roles.includes(role) && roles.length > 0) {
               const message = `Role ${role} is not allowed to access this API route.`;
@@ -90,10 +194,44 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "DELETE":
         if (allowedRoles && allowedRoles?.DELETE) {
           try {
-            const token = req.headers.accesstoken as string;
-            const accessToken = token.replace(/%22/g, '');
+            const cookies = new Cookies(req, res);
+            const temp = cookies.get('accessToken') as string;
+            let accessToken = temp.replace(/%22/g, '');
+            const rt = cookies.get('refreshToken') as string;
+            let refreshToken = rt.replace(/%22/g, '');
             const roles = allowedRoles.DELETE;
-            const decodedToken = await adminApp.auth().verifyIdToken(accessToken);
+            let decodedToken: any;
+            await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
+              decodedToken = dt;
+            }).catch(async (error) => {
+              if (error.code === 'auth/id-token-expired') {
+                const apiKey = process.env.FIREBASE_API_KEY;
+                const secureTokenEndpoint = `https://securetoken.googleapis.com/v1/token?key=` + apiKey;
+
+                const data = {
+                  grant_type: 'refresh_token',
+                  refresh_token: refreshToken,
+                };
+
+                await axios.post(secureTokenEndpoint, data)
+                  .then(async (response) => {
+                    accessToken = response.data.id_token;
+                    await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
+                      decodedToken = dt;
+                      const url = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/setToken";
+                      const token = {
+                        accessToken: accessToken,
+                        refreshToken: refreshToken
+                      }
+                      await axios.post(url, token);
+                    })
+                  })
+                  .catch((error) => {
+                    console.error('Error refreshing ID token:', error);
+                    res.status(200).json({ user: "Unathorized" });
+                  });
+              }
+            });
             const role = decodedToken.role;
             if (!roles.includes(role) && roles.length > 0) {
               const message = `Role ${role} is not allowed to access this API route.`;

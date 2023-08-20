@@ -9,21 +9,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await requestHandler(req, res, {
     GET: async () => {
       try {
-        const token = req.headers.accesstoken as string;
+        const token = req.body.accesstoken as string;
         let accessToken = token.replace(/%22/g, '');
-        const rt = req.headers.refreshtoken as string;
+        const rt = req.body.refreshtoken as string;
         const refreshToken = rt.replace(/%22/g, '');
         let decodedToken: any;
         await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
           decodedToken = dt;
           const email = decodedToken.email;
-          const role = decodedToken.role;
           const user = await prisma.user.findUnique({
             where: {
               email: email
             }
           });
-          res.status(200).json({ user: user, role: role, accessToken: accessToken });
+          res.status(200).json({ user: user, accessToken: accessToken });
         }).catch(async (error) => {
           if (error.code === 'auth/id-token-expired') {
             const apiKey = process.env.FIREBASE_API_KEY;
@@ -41,12 +40,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   decodedToken = dt;
                   const email = decodedToken.email;
                   const role = decodedToken.role;
+                  const url = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/setToken";
+                  const token = {
+                    accessToken: accessToken,
+                    refreshToken: refreshToken
+                  }
+                  await axios.post(url, token);
                   const user = await prisma.user.findUnique({
                     where: {
                       email: email
                     }
                   });
-                  res.status(200).json({ user: user, role: role, accessToken: accessToken });
+                  res.status(200).json({ user: user, accessToken: accessToken });
                 })
               })
               .catch((error) => {
