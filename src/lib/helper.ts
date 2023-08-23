@@ -1,5 +1,3 @@
-import { Kata } from "@prisma/client";
-
 const getTime = (datetime: any) => {
   const dt = new Date(datetime);
   const datetimeString = dt.toISOString();
@@ -45,7 +43,7 @@ function calculateAge(dateOfBirth: any): { years: number; months: number } {
   return { years, months };
 }
 
-function getRandomItems(arr: Kata[], excludedNumbers: number[]): Kata {
+function getRandomItems(arr: any[], excludedNumbers: number[]): any {
   let randomNumber;
 
   do {
