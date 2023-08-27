@@ -14,8 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             DELETE: ["USER"],
         },
         GET: async () => {
-            const token = req.headers.accesstoken as string;
-            let accessToken = token.replace(/%22/g, '');
+            let accessToken = req.cookies.accessToken?.replace(/"/g,'') as string;
             await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
                 const decodedToken = dt;
                 const uuid = decodedToken.uid;

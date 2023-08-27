@@ -28,13 +28,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             });
             const selected = getRandomItems(soal, excludedNumbers);
+            const randomNumber = selected[1];
             const pertanyaan = await prisma.pertanyaan.create({
                 data: {
                     idTest: idTest as string,
-                    kataStr: selected.kata
+                    kataStr: selected[0].kata
+                },
+                include: {
+                    kata: {
+                        select: {
+                            imgLink: true,
+                            usia: true
+                        }
+                    }
                 }
             });
-            res.status(200).json(pertanyaan);
+            res.status(200).json({pertanyaan, randomNumber});
         },
     });
 }
