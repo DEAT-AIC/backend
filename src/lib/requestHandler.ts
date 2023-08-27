@@ -26,11 +26,9 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "GET":
         if (allowedRoles && allowedRoles?.GET) {
           try {
-            const cookies = new Cookies(req, res);
-            const temp = cookies.get('accessToken') as string;
-            let accessToken = temp.replace(/%22/g, '');
-            const rt = cookies.get('refreshToken') as string;
-            let refreshToken = rt.replace(/%22/g, '');
+            const cookies = req.cookies;
+            let accessToken = cookies.accessToken?.replace(/"/g,'') as string;
+            let refreshToken = cookies.refreshToken?.replace(/"/g,'') as string;
             const roles = allowedRoles.GET;
             let decodedToken: any;
             await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
@@ -82,11 +80,9 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "POST":
         if (allowedRoles && allowedRoles?.POST) {
           try {
-            const cookies = new Cookies(req, res);
-            const temp = cookies.get('accessToken') as string;
-            let accessToken = temp.replace(/%22/g, '');
-            const rt = cookies.get('refreshToken') as string;
-            let refreshToken = rt.replace(/%22/g, '');
+            const cookies = req.cookies;
+            let accessToken = cookies.accessToken?.replace(/"/g,'') as string;
+            let refreshToken = cookies.refreshToken?.replace(/"/g,'') as string;
             const roles = allowedRoles.POST;
             let decodedToken: any;
             await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
@@ -138,11 +134,9 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "PUT":
         if (allowedRoles && allowedRoles?.PUT) {
           try {
-            const cookies = new Cookies(req, res);
-            const temp = cookies.get('accessToken') as string;
-            let accessToken = temp.replace(/%22/g, '');
-            const rt = cookies.get('refreshToken') as string;
-            let refreshToken = rt.replace(/%22/g, '');
+            const cookies = req.cookies;
+            let accessToken = cookies.accessToken?.replace(/"/g,'') as string;
+            let refreshToken = cookies.refreshToken?.replace(/"/g,'') as string;
             const roles = allowedRoles.PUT;
             let decodedToken: any;
             await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
@@ -194,11 +188,9 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
       case "DELETE":
         if (allowedRoles && allowedRoles?.DELETE) {
           try {
-            const cookies = new Cookies(req, res);
-            const temp = cookies.get('accessToken') as string;
-            let accessToken = temp.replace(/%22/g, '');
-            const rt = cookies.get('refreshToken') as string;
-            let refreshToken = rt.replace(/%22/g, '');
+            const cookies = req.cookies;
+            let accessToken = cookies.accessToken?.replace(/"/g,'') as string;
+            let refreshToken = cookies.refreshToken?.replace(/"/g,'') as string;
             const roles = allowedRoles.DELETE;
             let decodedToken: any;
             await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {

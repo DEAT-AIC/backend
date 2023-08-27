@@ -2,7 +2,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import requestHandler from "@/lib/requestHandler";
 import prisma from "@/lib/prisma";
-import { calculateAge, getRandomItems } from "@/lib/helper";
+import { calculateAge } from "@/lib/helper";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     await requestHandler(req, res, {

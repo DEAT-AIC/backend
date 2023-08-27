@@ -50,7 +50,9 @@ function getRandomItems(arr: any[], excludedNumbers: number[]): any {
     randomNumber = Math.floor(Math.random() * 50); 
   } while (excludedNumbers.includes(randomNumber));
 
-  return arr[randomNumber];
+  const res = [arr[randomNumber], randomNumber]
+
+  return res;
 }
 
 function sleep(ms: number): Promise<void> {

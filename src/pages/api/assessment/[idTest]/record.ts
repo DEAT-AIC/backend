@@ -13,16 +13,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             DELETE: ["USER"],
         },
         POST: async () => {
-            const jawaban = req.body.jawaban;
+            const jawaban = req.body.jawaban as string;
             const idPertanyaan = req.body.idPertanyaan;
             const pertanyaan = await prisma.pertanyaan.findUnique({
                 where: {
                     uuid: idPertanyaan
                 }
             });
-            const jawabanBenar = pertanyaan?.kataStr;
+            const jawabanBenar = pertanyaan?.kataStr as string;
             let kebenaran = false;
-            if (jawaban == jawabanBenar) kebenaran = true;
+            if (jawaban.toLowerCase() == jawabanBenar.toLowerCase()) kebenaran = true;
             await prisma.pertanyaan.update({
                 where: {
                     uuid: idPertanyaan
