@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { adminApp } from "./firebaseAdmin";
 import Cookies from "cookies";
 import axios from "axios";
+import { serialize } from "cookie";
 
 type Role = "USER" | "THERAPIST";
 
@@ -27,8 +28,8 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
         if (allowedRoles && allowedRoles?.GET) {
           try {
             const cookies = req.cookies;
-            let accessToken = cookies.accessToken?.replace(/"/g,'') as string;
-            let refreshToken = cookies.refreshToken?.replace(/"/g,'') as string;
+            let accessToken = cookies.accessToken?.replace(/"/g, '') as string;
+            let refreshToken = cookies.refreshToken?.replace(/"/g, '') as string;
             const roles = allowedRoles.GET;
             let decodedToken: any;
             await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
@@ -48,12 +49,19 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
                     accessToken = response.data.id_token;
                     await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
                       decodedToken = dt;
-                      const url = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/setToken";
-                      const token = {
-                        accessToken: accessToken,
-                        refreshToken: refreshToken
-                      }
-                      await axios.post(url, token);
+                      const serializedData = [serialize("accessToken", JSON.stringify(accessToken), {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === "production",
+                        path: "/",
+                        sameSite: "strict"
+                      }),
+                      serialize("refreshToken", JSON.stringify(refreshToken), {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === "production",
+                        path: "/",
+                        sameSite: "strict"
+                      })];
+                      res.setHeader("Set-Cookie", serializedData);
                     })
                   })
                   .catch((error) => {
@@ -81,8 +89,8 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
         if (allowedRoles && allowedRoles?.POST) {
           try {
             const cookies = req.cookies;
-            let accessToken = cookies.accessToken?.replace(/"/g,'') as string;
-            let refreshToken = cookies.refreshToken?.replace(/"/g,'') as string;
+            let accessToken = cookies.accessToken?.replace(/"/g, '') as string;
+            let refreshToken = cookies.refreshToken?.replace(/"/g, '') as string;
             const roles = allowedRoles.POST;
             let decodedToken: any;
             await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
@@ -102,12 +110,19 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
                     accessToken = response.data.id_token;
                     await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
                       decodedToken = dt;
-                      const url = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/setToken";
-                      const token = {
-                        accessToken: accessToken,
-                        refreshToken: refreshToken
-                      }
-                      await axios.post(url, token);
+                      const serializedData = [serialize("accessToken", JSON.stringify(accessToken), {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === "production",
+                        path: "/",
+                        sameSite: "strict"
+                      }),
+                      serialize("refreshToken", JSON.stringify(refreshToken), {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === "production",
+                        path: "/",
+                        sameSite: "strict"
+                      })];
+                      res.setHeader("Set-Cookie", serializedData);
                     })
                   })
                   .catch((error) => {
@@ -135,8 +150,8 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
         if (allowedRoles && allowedRoles?.PUT) {
           try {
             const cookies = req.cookies;
-            let accessToken = cookies.accessToken?.replace(/"/g,'') as string;
-            let refreshToken = cookies.refreshToken?.replace(/"/g,'') as string;
+            let accessToken = cookies.accessToken?.replace(/"/g, '') as string;
+            let refreshToken = cookies.refreshToken?.replace(/"/g, '') as string;
             const roles = allowedRoles.PUT;
             let decodedToken: any;
             await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
@@ -156,12 +171,19 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
                     accessToken = response.data.id_token;
                     await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
                       decodedToken = dt;
-                      const url = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/setToken";
-                      const token = {
-                        accessToken: accessToken,
-                        refreshToken: refreshToken
-                      }
-                      await axios.post(url, token);
+                      const serializedData = [serialize("accessToken", JSON.stringify(accessToken), {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === "production",
+                        path: "/",
+                        sameSite: "strict"
+                      }),
+                      serialize("refreshToken", JSON.stringify(refreshToken), {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === "production",
+                        path: "/",
+                        sameSite: "strict"
+                      })];
+                      res.setHeader("Set-Cookie", serializedData);
                     })
                   })
                   .catch((error) => {
@@ -189,8 +211,8 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
         if (allowedRoles && allowedRoles?.DELETE) {
           try {
             const cookies = req.cookies;
-            let accessToken = cookies.accessToken?.replace(/"/g,'') as string;
-            let refreshToken = cookies.refreshToken?.replace(/"/g,'') as string;
+            let accessToken = cookies.accessToken?.replace(/"/g, '') as string;
+            let refreshToken = cookies.refreshToken?.replace(/"/g, '') as string;
             const roles = allowedRoles.DELETE;
             let decodedToken: any;
             await adminApp.auth().verifyIdToken(accessToken, true).then((dt) => {
@@ -210,12 +232,19 @@ export default async function requestHandler(req: NextApiRequest, res: NextApiRe
                     accessToken = response.data.id_token;
                     await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
                       decodedToken = dt;
-                      const url = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/setToken";
-                      const token = {
-                        accessToken: accessToken,
-                        refreshToken: refreshToken
-                      }
-                      await axios.post(url, token);
+                      const serializedData = [serialize("accessToken", JSON.stringify(accessToken), {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === "production",
+                        path: "/",
+                        sameSite: "strict"
+                      }),
+                      serialize("refreshToken", JSON.stringify(refreshToken), {
+                        httpOnly: true,
+                        secure: process.env.NODE_ENV === "production",
+                        path: "/",
+                        sameSite: "strict"
+                      })];
+                      res.setHeader("Set-Cookie", serializedData);
                     })
                   })
                   .catch((error) => {
