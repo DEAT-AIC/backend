@@ -4,14 +4,15 @@ import requestHandler from "@/lib/requestHandler";
 import prisma from "@/lib/prisma";
 import { adminApp } from "@/lib/firebaseAdmin";
 import axios from "axios";
+import { serialize } from "cookie";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await requestHandler(req, res, {
-    GET: async () => {
+    POST: async () => {
       try {
-        const token = req.body.accesstoken as string;
+        const token = req.body.accessToken as string;
         let accessToken = token.replace(/%22/g, '');
-        const rt = req.body.refreshtoken as string;
+        const rt = req.body.refreshToken as string;
         const refreshToken = rt.replace(/%22/g, '');
         let decodedToken: any;
         await adminApp.auth().verifyIdToken(accessToken).then(async (dt) => {
@@ -22,6 +23,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               email: email
             }
           });
+          const serializedData = [serialize("accessToken", JSON.stringify(accessToken), {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            path: "/",
+            sameSite: "strict"
+          }),
+          serialize("refreshToken", JSON.stringify(refreshToken), {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            path: "/",
+            sameSite: "strict"
+          })];
+          res.setHeader("Set-Cookie", serializedData);
           res.status(200).json({ user: user, accessToken: accessToken });
         }).catch(async (error) => {
           if (error.code === 'auth/id-token-expired') {
@@ -40,12 +54,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   decodedToken = dt;
                   const email = decodedToken.email;
                   const role = decodedToken.role;
-                  const url = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/auth/setToken";
-                  const token = {
-                    accessToken: accessToken,
-                    refreshToken: refreshToken
-                  }
-                  await axios.post(url, token);
+                  const serializedData = [serialize("accessToken", JSON.stringify(accessToken), {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    path: "/",
+                    sameSite: "strict"
+                  }),
+                  serialize("refreshToken", JSON.stringify(refreshToken), {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    path: "/",
+                    sameSite: "strict"
+                  })];
+                  res.setHeader("Set-Cookie", serializedData);
                   const user = await prisma.user.findUnique({
                     where: {
                       email: email

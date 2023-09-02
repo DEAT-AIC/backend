@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         sameSite: "strict"
                     })];
                     res.setHeader("Set-Cookie", serializedData);
-                    res.status(200).json({ uid: user.uid, email: user.email });
+                    res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken });
                 }).catch((error) => {
                     const errorMessage = error.message;
                     res.status(400).json({ error: errorMessage });
