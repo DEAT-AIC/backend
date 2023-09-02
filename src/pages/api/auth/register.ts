@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                 address: req.body.address
                             }
                         })
-                        res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken });
+                        res.status(200).json({ accessToken: accessToken, refreshToken: refreshToken, uid: uid });
                     }
                 }).catch((error) => {
                     // const errorCode = error.code;
