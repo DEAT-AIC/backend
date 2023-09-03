@@ -27,6 +27,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     const obj: any = anak[i];
                     const umur = calculateAge(obj.tanggalLahir);
                     obj.umur = umur;
+                    obj.idAnak = obj.uuid;
+                    delete obj.uuid;
                 }
                 res.status(200).json(anak);
             })
