@@ -5,6 +5,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { clientApp } from "@/lib/firebaseClient";
 import { serialize } from "cookie";
 
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     await requestHandler(req, res, {
         POST: async () => {
