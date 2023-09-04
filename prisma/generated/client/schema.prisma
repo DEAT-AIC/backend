@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+enum JenisKelamin {
+  PRIA
+  PEREMPUAN
+}
+
+model User {
+    uuid String @default(uuid()) @id
+    email String @unique
+    nama String
+    phone String?
+    address String?
+    emailValid Boolean? @default(false)
+
+    anak Anak[]
+}
+
+model Anak {
+    uuid String @default(uuid()) @id
+    user User @relation(fields: [idUser], references: [uuid])
+    idUser String
+    nama String
+    tanggalLahir DateTime @db.Date
+    jenisKelamin JenisKelamin
+
+    test Test[]
+
+    @@index([idUser])
+}
+
+model Test {
+    uuid String @default(uuid()) @id
+    anak Anak @relation(fields: [idAnak], references: [uuid])
+    idAnak String
+    timestamp DateTime @default(now())
+    hasil String? @db.Text
+    rekomendasi String? @db.Text
+
+    pertanyaan Pertanyaan[]
+
+    @@index([idAnak])
+}
+
+model Pertanyaan {
+    uuid String @default(uuid()) @id
+    test Test @relation(fields: [idTest], references: [uuid])
+    idTest String
+    kata Kata @relation(fields: [kataStr], references: [kata])
+    kataStr String
+    jawaban String?
+    kebenaran Boolean @default(false)
+
+    @@index([idTest])
+    @@index([kataStr])
+}
+
+model Kata {
+    kata String @id
+    imgLink String
+    usia Int
+
+    pertanyaan Pertanyaan[]
+}
